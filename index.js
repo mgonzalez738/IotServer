@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const listenPort = 8000;
 
 const express = require('express');
@@ -10,7 +12,6 @@ const errorHandler = require("./middleware/errorHandler");
 const gatewayRoutes = require('./routes/gatewayRoute');
 
 const iotHubEventConsumer = require('./consumers/iotHubEventConsumer');
-const config = require('./config');
 
 /*
 mongoose.connect('mongodb://localhost/IotMonitoring', {
@@ -20,10 +21,10 @@ mongoose.connect('mongodb://localhost/IotMonitoring', {
     console.log(`DB Connection Error: ${err.message}`);
 });*/
 
-mongoose.connect("mongodb://"+config.cosmoDb.Host+":"+config.cosmoDb.Port+"/"+config.cosmoDb.DbName+"?ssl=true&replicaSet=globaldb", {
+mongoose.connect("mongodb://"+process.env.COSMO_DB_HOST+":"+process.env.COSMO_DB_PORT+"/"+process.env.COSMO_DB_PORT+"?ssl=true&replicaSet=globaldb", {
   auth: {
-    user: config.cosmoDb.User,
-    password: config.cosmoDb.Password
+    user: process.env.COSMO_DB_USER,
+    password: process.env.COSMO_DB_PASSWORD
   },
 useNewUrlParser: true,
 useUnifiedTopology: true,

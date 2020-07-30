@@ -1,10 +1,9 @@
 const GatewayData = require("../models/gatewayDataModel");
-const config = require("../config");
 var mongoose = require('mongoose');
 
 exports.index = async (req, res, next) => {
     try {
-        const gatewayData = await GatewayData.find({ GatewayId: req.params.id }).sort({ UtcTime: -1 });
+        const gatewayData = await GatewayData.find({ GatewayId: req.params.id });
         res.send(gatewayData);
     } catch (err) {
         next(err);

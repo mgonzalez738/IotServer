@@ -1,13 +1,12 @@
 const Gateway = require("../models/gatewayModel");
-const config = require("../config");
 var mongoose = require('mongoose');
 var Registry = require('azure-iothub').Registry;
 var Client = require('azure-iothub').Client;
 
 // Conexion al IoT Hub
-var iotHubConnectionString = "HostName=" + config.iotHub.HostName + ";" +
-                             "SharedAccessKeyName=" + config.iotHub.SharedAccessKeyName + ";" +
-                             "SharedAccessKey=" + config.iotHub.SharedAccessKey;
+var iotHubConnectionString = "HostName=" + process.env.IOT_HUB_HOST + ";" +
+                             "SharedAccessKeyName=" + process.env.IOT_HUB_SHARED_ACCESS_KEY_NAME + ";" +
+                             "SharedAccessKey=" + process.env.IOT_HUB_SHARED_ACCESS_KEY;
 var registry = Registry.fromConnectionString(iotHubConnectionString);
 var client = Client.fromConnectionString(iotHubConnectionString);
 

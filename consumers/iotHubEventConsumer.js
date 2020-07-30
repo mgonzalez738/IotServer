@@ -1,10 +1,7 @@
 const { EventHubConsumerClient } = require("@azure/event-hubs");
-const config = require("../config");
-const iotHubEventEndpoint = config.iotHub.EventEndpoint;
-const iotHubEventConsumerGroup = config.iotHub.EventConsumerGroup;
 const gatewayDataController = require('../controllers/gatewayDataController');
 
-const consumerClient = new EventHubConsumerClient(iotHubEventConsumerGroup, iotHubEventEndpoint);
+const consumerClient = new EventHubConsumerClient(process.env.IOT_HUB_EVENT_CONSUMER_GROUP, process.env.IOT_HUB_EVENT_ENDPOINT);
 
 var processMessages = function (messages) {
     for (const message of messages) {
