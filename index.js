@@ -13,15 +13,15 @@ const gatewayRoutes = require('./routes/gatewayRoute');
 
 const iotHubEventConsumer = require('./consumers/iotHubEventConsumer');
 
-/*
+
 mongoose.connect('mongodb://localhost/IotMonitoring', {
     useUnifiedTopology: true,
     useNewUrlParser: true,
 }).then(() => console.log('Connection to local MongoDB successful')).catch(err => {
     console.log(`DB Connection Error: ${err.message}`);
-});*/
-
-mongoose.connect("mongodb://"+process.env.COSMO_DB_HOST+":"+process.env.COSMO_DB_PORT+"/"+process.env.COSMO_DB_PORT+"?ssl=true&replicaSet=globaldb", {
+});
+/*
+mongoose.connect("mongodb://"+process.env.COSMO_DB_HOST+":"+process.env.COSMO_DB_PORT+"/"+process.env.COSMO_DB_NAME+"?ssl=true&replicaSet=globaldb", {
   auth: {
     user: process.env.COSMO_DB_USER,
     password: process.env.COSMO_DB_PASSWORD
@@ -32,7 +32,7 @@ retryWrites: false
 })
 .then(() => console.log('Connection to CosmosDB successful'))
 .catch((err) => console.error(err));
-
+*/
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());

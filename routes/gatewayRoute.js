@@ -7,7 +7,7 @@ const gatewayDataController = require('../controllers/gatewayDataController');
 router.get('/', gatewayController.index);
 router.get('/:id', gatewayController.show);
 router.post('/', gatewayController.store);
-router.delete('/:id', gatewayController.delete);
+router.delete('/:id', gatewayController.destroy);
 
 // Datos Gateway
 router.get('/:id/data/', gatewayDataController.index);

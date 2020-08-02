@@ -13,6 +13,7 @@ var client = Client.fromConnectionString(iotHubConnectionString);
 exports.index = async (req, res, next) => {
     try {
         const gateways = await Gateway.find().sort({ CreatedAt: -1 });
+        console.log("API GET /gateway/");
         res.send(gateways);
     } catch (err) {
         next(err);
@@ -100,7 +101,7 @@ exports.store = async (req, res, next) => {
     }
 };
 
-exports.delete = async (req, res, next) => {
+exports.destroy = async (req, res, next) => {
     try {
         
         registry.delete(req.params.id, async function (err) {

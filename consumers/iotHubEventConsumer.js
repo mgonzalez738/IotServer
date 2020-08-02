@@ -3,28 +3,33 @@ const gatewayDataController = require('../controllers/gatewayDataController');
 
 const consumerClient = new EventHubConsumerClient(process.env.IOT_HUB_EVENT_CONSUMER_GROUP, process.env.IOT_HUB_EVENT_ENDPOINT);
 
+// Procesa los eventos recibidos
 var processMessages = function (messages) {
     for (const message of messages) {
       
-      // Telemetria
+      // Eventos de Telemetria
       if(message.systemProperties['iothub-message-source'] == "Telemetry")
       {
-        console.log("\x1b[33mTelemetria recibida (" + message.body.UtcTime + ")\x1b[0m");
-        console.log("Id Dispositivo: " + message.systemProperties['iothub-connection-device-id']);
-        console.log("Tipo Dispositivo: " + message.properties.DeviceType);
+        var logMessage = "\x1b[33mEventHubEndpoint(" + process.env.IOT_HUB_HOST + "): Telemetria(" + message.body.UtcTime + ")";
 
         // Datos
         if(message.properties.MessageType == "Data")
         {
-            console.log("Tipo de Mensaje: Datos");
-            if( message.properties.DeviceType = "Gateway")
-                gatewayDataController.saveData(message.systemProperties['iothub-connection-device-id'], message.body);
+          // Log
+          logMessage = logMessage + " | " + message.properties.DeviceType + "(" + message.systemProperties['iothub-connection-device-id'] + ") | Data \x1b[0m";
+          console.log(logMessage);
+          // Guarda en Db 
+          saveDataToDb(message);
         }
 
         // Eventos
         if(message.properties.MessageType == "Event")
         {
-            console.log("Tipo de Mensaje: Evento");
+          // Log
+          logMessage = logMessage + " | " + message.properties.DeviceType + " (" + message.systemProperties['iothub-connection-device-id'] + ") | Event \x1b[0m";
+          console.log(logMessage);
+          // Guarda en Db 
+          saveEventToDb(message);
         }
       }
 
@@ -37,13 +42,32 @@ var processMessages = function (messages) {
           // Reportadas
           if(message.body.properties['reported'] != undefined)
           {
-            console.log("\x1b[33mActualizacion propiedades\x1b[0m");
-            console.log("Id Dispositivo: " + message.systemProperties['iothub-connection-device-id']);
+            // Log
+            var logMessage = "\x1b[33mEventHubEndpoint(" + process.env.IOT_HUB_HOST + "): Actualización Propiedades Reportadas";          
+            logMessage = logMessage + " | (" + message.systemProperties['iothub-connection-device-id'] + ").\x1b[0m";
+            console.log(logMessage);
           }
         }
       }
     }
   };
+
+  // Guarda el mensaje de datos en dB
+  var saveDataToDb = function (msg) {
+    switch( msg.properties.DeviceType) {
+      case "Gateway":
+        gatewayDataController.saveData(msg.systemProperties['iothub-connection-device-id'], msg.body);
+        break;
+    }
+  }
+
+  var saveEventToDb = function (msg) {
+    switch( msg.properties.DeviceType) {
+      case "Gateway":
+        //gatewayDataController.saveData(msg.systemProperties['iothub-connection-device-id'], msg.body);
+        break;
+    }
+  }
 
   var printError = function (err) {
     console.log(err.message);

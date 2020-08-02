@@ -3,7 +3,12 @@ var mongoose = require('mongoose');
 
 exports.index = async (req, res, next) => {
     try {
-        const gatewayData = await GatewayData.find({ GatewayId: req.params.id });
+        const gatewayData = await GatewayData.find({ GatewayId: req.params.id }).sort({ "Data.UtcTime": -1 });
+        if(!gatewayData.length)
+            next({
+                statusCode: 404,
+                message: "Resourse _id = " + req.params.id + " not found"
+            });
         res.send(gatewayData);
     } catch (err) {
         next(err);
@@ -18,7 +23,7 @@ exports.store = async (req, res, next) => {
         gatewayData.GatewayId = req.params.id;
         gatewayData.Data = req.body;
         gatewayData = await gatewayData.save();
-        console.log("GatewayData (ID = " + gatewayData.GatewayId + ") guardados en Db.");
+        //console.log("GatewayData (ID = " + gatewayData.GatewayId + ") guardados en Db.");
         res.send(gatewayData);
        
     } catch (err) {
@@ -32,7 +37,7 @@ exports.saveData = async (gwId, data) => {
         gatewayData.GatewayId = gwId;
         gatewayData.Data = data;
         gatewayData = await gatewayData.save();
-        console.log("GatewayData (ID = " + gatewayData.GatewayId + ") guardados en Db.");       
+        //console.log("GatewayData (ID = " + gatewayData.GatewayId + ") guardados en Db.");       
     } catch (err) {
         console.log(err);
     }
