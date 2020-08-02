@@ -11,6 +11,7 @@ router.delete('/:id', gatewayController.destroy);
 
 // Datos Gateway
 router.get('/:id/data/', gatewayDataController.index);
+router.get('/:id/data/:subid', gatewayDataController.show);
 router.post('/:id/data/', gatewayDataController.store);
 
 module.exports = router;

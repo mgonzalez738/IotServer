@@ -40,7 +40,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.get('/', function (req, res) {
   res.send('Hello from Gie IotMonitoring Api')
-})
+});
+
 app.use("/api/gateway", gatewayRoutes);
 
 app.use(errorHandler);

@@ -1,7 +1,9 @@
 const { EventHubConsumerClient } = require("@azure/event-hubs");
 const gatewayDataController = require('../controllers/gatewayDataController');
+var mongoose = require('mongoose');
 
 const consumerClient = new EventHubConsumerClient(process.env.IOT_HUB_EVENT_CONSUMER_GROUP, process.env.IOT_HUB_EVENT_ENDPOINT);
+const iotHubName = process.env.IOT_HUB_HOST.slice(0, process.env.IOT_HUB_HOST.indexOf("."));
 
 // Procesa los eventos recibidos
 var processMessages = function (messages) {
@@ -10,16 +12,17 @@ var processMessages = function (messages) {
       // Eventos de Telemetria
       if(message.systemProperties['iothub-message-source'] == "Telemetry")
       {
-        var logMessage = "\x1b[33mEventHubEndpoint(" + process.env.IOT_HUB_HOST + "): Telemetria(" + message.body.UtcTime + ")";
+        var logMessage = "\x1b[33mEventHubEndpoint(" + iotHubName + "): Telemetria(" + message.body.UtcTime + ")";
+        logMessage = logMessage + " | " + message.properties.DeviceType + "(" + message.systemProperties['iothub-connection-device-id'] + ")"; 
 
         // Datos
         if(message.properties.MessageType == "Data")
         {
-          // Log
-          logMessage = logMessage + " | " + message.properties.DeviceType + "(" + message.systemProperties['iothub-connection-device-id'] + ") | Data \x1b[0m";
-          console.log(logMessage);
           // Guarda en Db 
-          saveDataToDb(message);
+          var id = saveDataToDb(message);
+          // Log
+          logMessage = logMessage + " | Data(" + id + ") \x1b[0m";
+          console.log(logMessage);
         }
 
         // Eventos
@@ -30,6 +33,7 @@ var processMessages = function (messages) {
           console.log(logMessage);
           // Guarda en Db 
           saveEventToDb(message);
+          
         }
       }
 
@@ -54,11 +58,13 @@ var processMessages = function (messages) {
 
   // Guarda el mensaje de datos en dB
   var saveDataToDb = function (msg) {
+    var id = mongoose.Types.ObjectId().toHexString();
     switch( msg.properties.DeviceType) {
       case "Gateway":
-        gatewayDataController.saveData(msg.systemProperties['iothub-connection-device-id'], msg.body);
+        gatewayDataController.saveData(id, msg.systemProperties['iothub-connection-device-id'], msg.body);
         break;
     }
+    return id;
   }
 
   var saveEventToDb = function (msg) {
@@ -70,7 +76,8 @@ var processMessages = function (messages) {
   }
 
   var printError = function (err) {
-    console.log(err.message);
+    var logMessage = "\x1b[33mEventHubEndpoint(" + iotHubName + "): Error -> " + err.message + "\x1b[0m";
+    console.log(logMessage);
   };
 
 exports.suscribe = () => {

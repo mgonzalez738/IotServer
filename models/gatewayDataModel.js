@@ -3,10 +3,11 @@ mongoose.set('useCreateIndex', true);
 
 const Schema = mongoose.Schema;
 
-const GatewayDataSchema = new Schema({
-    GatewayId : { type: mongoose.Schema.Types.ObjectId },
+var GatewayDataSchema = new Schema({
+    _id: { type: mongoose.Schema.Types.ObjectId },
+    _gatewayId : { type: mongoose.Schema.Types.ObjectId },
     Data: {
-        UtcTime: { type: Date, required : true},
+        UtcTime: { type: Date, required : true, unique: true},
         PowerVoltage: { type: Number, required : true },
         SensedVoltage: { type: Number, required : true },
         BatteryVoltage: { type: Number, required : true },
