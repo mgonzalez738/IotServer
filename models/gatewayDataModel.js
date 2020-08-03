@@ -4,15 +4,15 @@ mongoose.set('useCreateIndex', true);
 const Schema = mongoose.Schema;
 
 var GatewayDataSchema = new Schema({
-    _id: { type: mongoose.Schema.Types.ObjectId },
-    _gatewayId : { type: mongoose.Schema.Types.ObjectId },
-    Data: {
-        UtcTime: { type: Date, required : true, unique: true},
+    _gatewayId : { type: mongoose.Schema.Types.ObjectId, required : true },
+    DocDate: { type: Date, required : true},
+    Data: [{
+        UtcTime: { type: Date, required : true},
         PowerVoltage: { type: Number, required : true },
         SensedVoltage: { type: Number, required : true },
         BatteryVoltage: { type: Number, required : true },
         Temperature: { type: Number, required : true }
-    },
+    }],
 });
 
 module.exports = mongoose.model("gatewayData", GatewayDataSchema);

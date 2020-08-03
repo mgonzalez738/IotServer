@@ -13,5 +13,7 @@ router.delete('/:id', gatewayController.destroy);
 router.get('/:id/data/', gatewayDataController.index);
 router.get('/:id/data/:subid', gatewayDataController.show);
 router.post('/:id/data/', gatewayDataController.store);
+router.delete('/:id/data/:subid', gatewayDataController.destroy);
+router.put('/:id/data/:subid', gatewayDataController.update);
 
 module.exports = router;

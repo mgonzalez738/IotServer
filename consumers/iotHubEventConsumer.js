@@ -12,16 +12,17 @@ var processMessages = function (messages) {
       // Eventos de Telemetria
       if(message.systemProperties['iothub-message-source'] == "Telemetry")
       {
-        var logMessage = "\x1b[33mEventHubEndpoint(" + iotHubName + "): Telemetria(" + message.body.UtcTime + ")";
+        var logMessage = "\x1b[33mEventHubEndpoint(" + iotHubName + "): Telemetria";
         logMessage = logMessage + " | " + message.properties.DeviceType + "(" + message.systemProperties['iothub-connection-device-id'] + ")"; 
 
         // Datos
         if(message.properties.MessageType == "Data")
         {
           // Guarda en Db 
-          var id = saveDataToDb(message);
+          //var id = saveDataToDb(message);
+          saveDataToDb(message);
           // Log
-          logMessage = logMessage + " | Data(" + id + ") \x1b[0m";
+          logMessage = logMessage + " | Data(" + message.body.UtcTime + ") \x1b[0m";
           console.log(logMessage);
         }
 
@@ -58,13 +59,12 @@ var processMessages = function (messages) {
 
   // Guarda el mensaje de datos en dB
   var saveDataToDb = function (msg) {
-    var id = mongoose.Types.ObjectId().toHexString();
     switch( msg.properties.DeviceType) {
       case "Gateway":
-        gatewayDataController.saveData(id, msg.systemProperties['iothub-connection-device-id'], msg.body);
+        gatewayDataController.saveData(msg.systemProperties['iothub-connection-device-id'], msg.body);
         break;
     }
-    return id;
+    //return id;
   }
 
   var saveEventToDb = function (msg) {
