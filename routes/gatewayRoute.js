@@ -5,15 +5,17 @@ const gatewayDataController = require('../controllers/gatewayDataController');
 const {queryFromIsISO8601, queryToIsISO8601, parameterGatewayIdIsMongoId, parameterDataIdIsMongoId, bodyIsAggregationStageArray} = require('../validations/gatewayDataValidators');
 const {bodyUtcTimeIsISO8601, bodyPowerVoltageIsFloat, bodySensedVoltageIsFloat, bodyBatteryVoltageIsFloat, bodyTemperatureIsFloat} = require('../validations/gatewayDataValidators');
 
-
-// Gateways
-
-router.get('/', gatewayController.index);
-router.get('/:id', gatewayController.show);
-router.post('/', gatewayController.store);
-router.delete('/:id', gatewayController.destroy);
-
 // Datos Gateway
+
+router.get(
+    '/data/',
+    [
+        queryFromIsISO8601,
+        queryToIsISO8601,
+        bodyIsAggregationStageArray
+    ], 
+    gatewayDataController.indexAllGw
+);
 
 router.get(
     '/:gwId/data/',
@@ -23,7 +25,7 @@ router.get(
         queryToIsISO8601,
         bodyIsAggregationStageArray
     ], 
-    gatewayDataController.index
+    gatewayDataController.indexOneGw
 );
 
 router.get(
@@ -69,6 +71,34 @@ router.put(
         bodyTemperatureIsFloat
     ],
     gatewayDataController.update
+);
+
+// Gateways
+
+router.get(
+    '/', 
+    gatewayController.index
+);
+
+router.get(
+    '/:gwId', 
+    [
+        parameterGatewayIdIsMongoId
+    ],
+    gatewayController.show
+);
+
+router.post(
+    '/', 
+    gatewayController.store
+);
+
+router.delete(
+    '/:gwId', 
+    [
+        parameterGatewayIdIsMongoId
+    ],
+    gatewayController.destroy
 );
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const Gateway = require("../models/gatewayModel");
+const validationHandler = require('../validations/validationHandler');
 var mongoose = require('mongoose');
 var Registry = require('azure-iothub').Registry;
 var Client = require('azure-iothub').Client;
@@ -11,12 +12,44 @@ var registry = Registry.fromConnectionString(iotHubConnectionString);
 var client = Client.fromConnectionString(iotHubConnectionString);
 
 exports.index = async (req, res, next) => {
+
+    var logMessage = "\x1b[34mApi: " + req.method + "(" + req.originalUrl + ") | Retrieve Gateways\x1b[0m";
+
+    // Validacion
+
     try {
+        validationHandler(req);
+    }
+    catch (err) {
+        next(err);
+        console.log(logMessage + "\x1b[31m -> " + err.message + "\x1b[0m");
+        return;
+    }
+
+    // Procesamiento
+
+    try {
+
+        logMessage = logMessage + "\x1b[0m";
+        console.log(logMessage);
+
         const gateways = await Gateway.find().sort({ CreatedAt: -1 });
-        console.log("API GET /gateway/");
-        res.send(gateways);
+
+        if(!gateways.length)
+        {
+            var msg = "No data found";
+            next({
+                statusCode: 404,
+                message: msg
+            });
+            console.log("\x1b[35mDatabase: Gateways | No data retrieved \x1b[0m");
+        } else {
+            console.log("\x1b[35mDatabase: Gateways | Data retrieved (" + gateways.length + " records)\x1b[0m");
+            res.send(gateways);
+        }
     } catch (err) {
         next(err);
+        console.log("\x1b[35mDatabase: Gateways) | \x1b[31mError retrieving data \x1b[35m -> " + err.message + "\x1b[0m");
     }
 };
 

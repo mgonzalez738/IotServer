@@ -33,17 +33,17 @@ exports.bodyUtcTimeIsISO8601 = body("UtcTime")
     .withMessage("Body 'UtcTime' must be a valid ISO 8601 datetime");
 
 exports.bodyPowerVoltageIsFloat = body("PowerVoltage")
-    .isFloat({ min: 0, max: 50 })
+    .optional().isFloat({ min: 0, max: 50 })
     .withMessage("Body 'PowerVoltage' must be a Float between 0 and 50");
 
 exports.bodySensedVoltageIsFloat = body("SensedVoltage")
-    .isFloat({ min: 0, max: 50 })
+    .optional().isFloat({ min: 0, max: 50 })
     .withMessage("Body 'SensedVoltage' must be a Float between 0 and 50");
 
 exports.bodyBatteryVoltageIsFloat = body("BatteryVoltage")
-    .isFloat({ min: 0, max: 5 })
+    .optional().isFloat({ min: 0, max: 5 })
     .withMessage("Body 'BatteryVoltage' must be a Float between 0 and 5");
 
 exports.bodyTemperatureIsFloat = body("Temperature")
-    .isFloat({ min: -10, max: 60 })
+    .optional().isFloat({ min: -10, max: 60 })
     .withMessage("Body 'Temperature' must be a Float between -10 and 60");
